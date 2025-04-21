@@ -1,11 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { connect } from './config/connect.js';
-import { authRoutes, VariablesRoutes } from './routes/index.js';
-import errorHandler from './middlewares/errorHandler.js';
-import CustomErrorHandler from './utils/CustomErrorHandler.js';
-import { DATABASE_URL } from './config/index.js';
+import { connect } from './src/config/connect.js';
+import { authRoutes, VariablesRoutes } from './src/routes/index.js';
+import errorHandler from './src/middlewares/errorHandler.js';
+import CustomErrorHandler from './src/utils/CustomErrorHandler.js';
+import { DATABASE_URL } from './src/config/index.js';
 
 dotenv.config();
 
