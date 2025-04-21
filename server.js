@@ -1,14 +1,64 @@
 import express from 'express';
-import { PORT } from './config/index.js'; // assuming PORT is something like 5000
+import dotenv from 'dotenv';
+import cors from 'cors';
+import { connect } from './config/connect.js';
+import { authRoutes, VariablesRoutes } from './routes/index.js';
+import errorHandler from './middlewares/errorHandler.js';
+import CustomErrorHandler from './utils/CustomErrorHandler.js';
+import { DATABASE_URL } from './config/index.js';
+
+dotenv.config();
+
 const app = express();
 
-app.use('/', (req, res) => {
-    res.send(`
-        <h1>Welcome to E-commerce Rest APIs</h1>
-        You may contact me <a href="https://codersgyan.com/links/">here</a>
-        Or reach out for API help: codersgyan@gmail.com
-    `);
+// Middleware
+app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// Custom error handler for specific errors
+app.use((err, req, res, next) => {
+  if (err instanceof CustomErrorHandler) {
+    return res.status(err.status).json({
+      message: err.message,
+      status: err.status,
+    });
+  }
+
+  return res.status(500).json({
+    message: 'Something went wrong!',
+    status: 500,
+  });
 });
 
-const port = PORT || 5000;
-app.listen(port, () => console.log(`Listening on port ${port}.`));
+// Routes
+app.use('/api', authRoutes);
+app.use('/api', VariablesRoutes);
+
+// Default route
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>Welcome to E-commerce Rest APIs</h1>
+    Contact me <a href="https://codersgyan.com/links/">here</a><br>
+    Or reach out for API help: codersgyan@gmail.com
+  `);
+});
+
+app.use(errorHandler);
+
+// Start server
+const startServer = async () => {
+  try {
+    await connect(DATABASE_URL);
+
+    const PORT = process.env.PORT || 3000;
+
+    app.listen(PORT, '0.0.0.0', () =>
+      console.log(`🚀 Server running at http://localhost:${PORT}`)
+    );
+  } catch (err) {
+    console.error('❌ Failed to start server:', err);
+  }
+};
+
+startServer();
