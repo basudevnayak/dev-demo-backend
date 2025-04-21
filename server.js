@@ -12,6 +12,7 @@ const app = express();
 // import mongoose from 'mongoose';
 // import path from 'path';
 import cors from 'cors';
+import { DATABASE_URL } from './config/index.js';
 
 // Database connection
 // mongoose.connect(DB_URL, {
@@ -46,7 +47,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/api', VariablesRoutes);
-
 // app.use('/uploads', express.static('uploads'));
 app.use('/', (req, res) => {
     res.send(`
@@ -61,9 +61,11 @@ app.use(errorHandler);
 // app.listen(PORT, () => console.log(`Listening on port ${PORT}.`));
 
 const start = async () => {
+  console.log(DATABASE_URL)
   try {
-    await connect("mongodb+srv://basudevnayak31:OPOgFhSnU8pb1x2x@cluster0.exfu446.mongodb.net/investationTeam?retryWrites=true&w=majority&appName=Cluster0");
-
+    // await connect("mongodb+srv://basudevnayak31:OPOgFhSnU8pb1x2x@cluster0.exfu446.mongodb.net/investationTeam?retryWrites=true&w=majority&appName=Cluster0");
+    await connect(DATABASE_URL);
+    
     // Uncomment this and comment below one if you want to run on ip address so that you can
     // access api in physical device
 
