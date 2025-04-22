@@ -1,13 +1,13 @@
 import express from 'express';
 import serverless from 'serverless-http';
 
-// Initialize Express app
+// setup...
 const app = express();
 
-// Define routes
+// routes...
 app.get('/', (req, res) => {
   res.send('Hello from Vercel!');
 });
 
-// Export as a serverless function
+// 👇 REQUIRED EXPORT
 export const handler = serverless(app);
