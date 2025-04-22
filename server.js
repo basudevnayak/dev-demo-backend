@@ -49,7 +49,7 @@ app.use(errorHandler);
 // Start server
 const startServer = async () => {
   try {
-    await connect(DATABASE_URL);
+    await connect("mongodb+srv://basudevnayak31:OPOgFhSnU8pb1x2x@cluster0.exfu446.mongodb.net/investationTeam?retryWrites=true&w=majority&appName=Cluster0");
 
     const PORT = process.env.PORT || 3000;
 
