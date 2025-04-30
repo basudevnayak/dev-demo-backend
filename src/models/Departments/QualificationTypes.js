@@ -6,6 +6,6 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const Departments = mongoose.model('Departments', userSchema);
+const QualificationTypes = mongoose.model('QualificationTypes', userSchema);
 
-export default Departments;
+export default QualificationTypes;

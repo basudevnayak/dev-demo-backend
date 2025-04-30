@@ -1,4 +1,4 @@
-import { Departments } from '../../models/index.js';
+import { Designations } from '../../models/index.js';
 // import multer from 'multer';
 import path from 'path';
 import CustomErrorHandler from '../../utils/CustomErrorHandler.js';
@@ -28,7 +28,7 @@ const DepartmentsController = {
         }
         const { name, remark } = req.body;
         try {
-            const exists = await Departments.findOne({ name });
+            const exists = await Designations.findOne({ name });
             if (exists) {
                 return res.status(409).json({
                     message: 'Department already exists',
@@ -37,7 +37,7 @@ const DepartmentsController = {
                 });
             }
 
-            const department = new Departments({
+            const department = new Designations({
                 name: name,
                 remark,
                 updatedAt: new Date(),
@@ -66,7 +66,7 @@ const DepartmentsController = {
 
         try {
             // 1. Check if the name is already used by another department
-            const existingDepartment = await Departments.findOne({
+            const existingDepartment = await Designations.findOne({
                 name: req.body.name,
                 _id: { $ne: id }  // _id not equal to the current document
             });
@@ -76,7 +76,7 @@ const DepartmentsController = {
             }
 
             // 2. Proceed to update if no duplicate
-            const updatedDepartment = await Departments.findByIdAndUpdate(
+            const updatedDepartment = await Designations.findByIdAndUpdate(
                 id,
                 {
                     $set: {
@@ -118,7 +118,7 @@ const DepartmentsController = {
                 });
             }
 
-            const result = await Departments.deleteMany({ _id: { $in: ids } });
+            const result = await Designations.deleteMany({ _id: { $in: ids } });
 
             return res.status(200).json({
                 message: `${result.deletedCount} Deleted successfully.`,
@@ -129,9 +129,10 @@ const DepartmentsController = {
             return next(CustomErrorHandler.serverError(err.message));
         }
     },
-   
+
     async index(req, res, next) {
         try {
+            // Destructure parameters from the request query
             const {
                 page = 1,
                 limit = 10,
@@ -147,9 +148,13 @@ const DepartmentsController = {
                 sortOrder: req.query['sort[order]'] || 'desc',
                 purchaseChannel: req.query.purchaseChannel || []
             };
+
+            // Convert page and limit to numbers
             const pageNum = Number(page);
             const limitNum = Number(limit);
             const skip = (pageNum - 1) * limitNum;
+
+            // Construct filter based on query and purchaseChannel
             const filter = {
                 ...(query ? { name: { $regex: query, $options: 'i' } } : {}),
                 ...(Array.isArray(purchaseChannel) && purchaseChannel.length > 0
@@ -162,12 +167,12 @@ const DepartmentsController = {
 
             // Fetch documents and total count in parallel
             const [documents, total] = await Promise.all([
-                Departments.find(filter)
+                Designations.find(filter)
                     .select('-__v -updatedAt')
                     .sort(sort)
                     .skip(skip)
                     .limit(limitNum),
-                Departments.countDocuments(filter)
+                    Designations.countDocuments(filter)
             ]);
 
             // Map through the documents to capitalize name and add other fields
@@ -201,7 +206,7 @@ const DepartmentsController = {
     async show(req, res, next) {
         let document;
         try {
-            document = await Departments.findOne({ _id: req.params.id }).select(
+            document = await Designations.findOne({ _id: req.params.id }).select(
                 '-updatedAt -__v'
             );
 
@@ -243,7 +248,7 @@ const DepartmentsController = {
             }
 
             // Check for existing department names
-            const existingDepartments = await Departments.find({
+            const existingDepartments = await Designations.find({
                 name: { $in: customersToInsert.map(item => item.name) },
             });
             const existingDepartmentNames = existingDepartments.map(department => department.name);
@@ -257,7 +262,7 @@ const DepartmentsController = {
                     message: 'Some data already exist'
                 });
             }
-            const savedDepartments = await Departments.insertMany(newDepartments);
+            const savedDepartments = await Designations.insertMany(newDepartments);
             return res.status(200).json({
                 status: 200,
                 message: 'Imported successfully',
@@ -273,10 +278,10 @@ const DepartmentsController = {
     },
     async export(req, res, next) {
         try {
-            const departments = await Departments.find({})
+            const departments = await Designations.find({})
             .select('name remark -_id');
             if (departments.length === 0) {
-                return res.status(404).json({ message: 'No departments found' });
+                return res.status(404).json({ message: 'Not found' });
             }
             return res.status(200).json({
                 status: 200,

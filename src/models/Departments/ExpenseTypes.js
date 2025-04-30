@@ -6,6 +6,6 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const Departments = mongoose.model('Departments', userSchema);
+const ExpenseTypes = mongoose.model('ExpenseTypes', userSchema);
 
-export default Departments;
+export default ExpenseTypes;

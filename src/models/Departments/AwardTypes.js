@@ -6,6 +6,6 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const Departments = mongoose.model('Departments', userSchema);
+const AwardTypes = mongoose.model('AwardTypes', userSchema);
 
-export default Departments;
+export default AwardTypes;

@@ -1,11 +1,9 @@
-import { Departments } from '../../models/index.js';
-// import multer from 'multer';
+import { LeaveTypes } from '../../models/index.js';
 import path from 'path';
 import CustomErrorHandler from '../../utils/CustomErrorHandler.js';
 import fs from 'fs';
 import Joi from 'joi';
-// import productSchema from '../validators/productValidator';
-const DepartmentsController = {
+const LeaveTypesController = {
     capitalize(str) {
         if (typeof str !== 'string') return '';
         return str
@@ -28,7 +26,7 @@ const DepartmentsController = {
         }
         const { name, remark } = req.body;
         try {
-            const exists = await Departments.findOne({ name });
+            const exists = await LeaveTypes.findOne({ name });
             if (exists) {
                 return res.status(409).json({
                     message: 'Department already exists',
@@ -37,7 +35,7 @@ const DepartmentsController = {
                 });
             }
 
-            const department = new Departments({
+            const department = new LeaveTypes({
                 name: name,
                 remark,
                 updatedAt: new Date(),
@@ -66,7 +64,7 @@ const DepartmentsController = {
 
         try {
             // 1. Check if the name is already used by another department
-            const existingDepartment = await Departments.findOne({
+            const existingDepartment = await LeaveTypes.findOne({
                 name: req.body.name,
                 _id: { $ne: id }  // _id not equal to the current document
             });
@@ -76,7 +74,7 @@ const DepartmentsController = {
             }
 
             // 2. Proceed to update if no duplicate
-            const updatedDepartment = await Departments.findByIdAndUpdate(
+            const updatedDepartment = await LeaveTypes.findByIdAndUpdate(
                 id,
                 {
                     $set: {
@@ -118,7 +116,7 @@ const DepartmentsController = {
                 });
             }
 
-            const result = await Departments.deleteMany({ _id: { $in: ids } });
+            const result = await LeaveTypes.deleteMany({ _id: { $in: ids } });
 
             return res.status(200).json({
                 message: `${result.deletedCount} Deleted successfully.`,
@@ -129,9 +127,9 @@ const DepartmentsController = {
             return next(CustomErrorHandler.serverError(err.message));
         }
     },
-   
     async index(req, res, next) {
         try {
+            // Destructure parameters from the request query
             const {
                 page = 1,
                 limit = 10,
@@ -147,9 +145,13 @@ const DepartmentsController = {
                 sortOrder: req.query['sort[order]'] || 'desc',
                 purchaseChannel: req.query.purchaseChannel || []
             };
+
+            // Convert page and limit to numbers
             const pageNum = Number(page);
             const limitNum = Number(limit);
             const skip = (pageNum - 1) * limitNum;
+
+            // Construct filter based on query and purchaseChannel
             const filter = {
                 ...(query ? { name: { $regex: query, $options: 'i' } } : {}),
                 ...(Array.isArray(purchaseChannel) && purchaseChannel.length > 0
@@ -162,19 +164,19 @@ const DepartmentsController = {
 
             // Fetch documents and total count in parallel
             const [documents, total] = await Promise.all([
-                Departments.find(filter)
+                LeaveTypes.find(filter)
                     .select('-__v -updatedAt')
                     .sort(sort)
                     .skip(skip)
                     .limit(limitNum),
-                Departments.countDocuments(filter)
+                LeaveTypes.countDocuments(filter)
             ]);
 
             // Map through the documents to capitalize name and add other fields
             const list = documents.map((_data) => ({
                 ..._data._doc,
                 ..._data,
-                name: DepartmentsController.capitalize(_data.name), // Capitalize the name
+                name: LeaveTypesController.capitalize(_data.name), // Capitalize the name
                 remark: _data.remark,
                 id: _data._id,
             }));
@@ -201,7 +203,7 @@ const DepartmentsController = {
     async show(req, res, next) {
         let document;
         try {
-            document = await Departments.findOne({ _id: req.params.id }).select(
+            document = await LeaveTypes.findOne({ _id: req.params.id }).select(
                 '-updatedAt -__v'
             );
 
@@ -243,7 +245,7 @@ const DepartmentsController = {
             }
 
             // Check for existing department names
-            const existingDepartments = await Departments.find({
+            const existingDepartments = await LeaveTypes.find({
                 name: { $in: customersToInsert.map(item => item.name) },
             });
             const existingDepartmentNames = existingDepartments.map(department => department.name);
@@ -257,7 +259,7 @@ const DepartmentsController = {
                     message: 'Some data already exist'
                 });
             }
-            const savedDepartments = await Departments.insertMany(newDepartments);
+            const savedDepartments = await LeaveTypes.insertMany(newDepartments);
             return res.status(200).json({
                 status: 200,
                 message: 'Imported successfully',
@@ -273,8 +275,8 @@ const DepartmentsController = {
     },
     async export(req, res, next) {
         try {
-            const departments = await Departments.find({})
-            .select('name remark -_id');
+            const departments = await LeaveTypes.find({})
+                .select('name remark -_id');
             if (departments.length === 0) {
                 return res.status(404).json({ message: 'No departments found' });
             }
@@ -283,15 +285,12 @@ const DepartmentsController = {
                 success: true,
                 message: 'Fetched successfully',
                 list: departments,  // Send only the selected fields
-            });    
+            });
         } catch (err) {
             console.error('Export Error:', err);
             return next(CustomErrorHandler.serverError(err.message));
         }
     }
-
-
-
 };
 
-export default DepartmentsController;
+export default LeaveTypesController;

@@ -6,6 +6,6 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-const Departments = mongoose.model('Departments', userSchema);
+const BusinessNatureTypes = mongoose.model('BusinessNatureTypes', userSchema);
 
-export default Departments;
+export default BusinessNatureTypes;
