@@ -6,21 +6,15 @@ import Joi from 'joi';
 import bcrypt from 'bcrypt';
 import CustomErrorHandler from "../../utils/CustomErrorHandler.js";
 const AuthController = {
-  // Assuming User is your Mongoose model
   async index(req, res, next) {
     try {
-      // Fetch all users from the database, excluding the password for security
-      const users = await User.find().select('-password'); // Excludes the password field
-
-      // If no users are found
+      const users = await User.find().select('-password');
       if (!users || users.length === 0) {
         return res.status(404).json({
           message: 'No users found',
           status: 404,
         });
       }
-
-      // Send the list of users back in the response
       res.status(200).json({
         message: 'Users fetched successfully',
         status: 200,
@@ -98,66 +92,50 @@ const AuthController = {
   },
 
   async login(req, res, next) {
-    // Validation schema for email and password
     const loginSchema = Joi.object({
       email: Joi.string().email().required(),
       password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
     });
-
-    // Validate the input
     const { error } = loginSchema.validate(req.body);
     if (error) {
-      return next(error); // Pass validation error to the next middleware
+      return next(error);
     }
-
     try {
-      // Look for the user by email
       const user = await User.findOne({ email: req.body.email });
       if (!user) {
         return next(CustomErrorHandler.wrongCredentials());
       }
-
-      // Compare the submitted password with the hashed password in the database
       const match = await bcrypt.compare(req.body.password, user.password);
       if (!match) {
         return next(CustomErrorHandler.wrongCredentials());
       }
-
-      // Generate the access token
       const access_token = JwtService.sign({ _id: user._id, role: user.role });
       const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
-
-      // Save the refresh token to the database (whitelist it)
       await RefreshToken.create({ token: refresh_token });
-
-      // Return the user data and the tokens
       res.json({
         user: {
           id: user._id,
           userName: user.userName,
           email: user.email,
-          avatar: user.avatar, // Optional, if you have avatar in your user schema
+          avatar: user.avatar,
           authority: user.role === 'admin' ? ['admin', 'user'] : ['user'],
-          accountUserName: user.accountUserName || user.email, // You can return custom name here
+          accountUserName: user.accountUserName || user.email, 
         },
         token: access_token,
       });
     } catch (err) {
-      return next(err); // Pass any other errors to the next middleware
+      return next(err); 
     }
   },
   async logout(req, res, next) {
     try {
-      // validation
       const refreshSchema = Joi.object({
         refresh_token: Joi.string().required(),
       });
       const { error } = refreshSchema.validate(req.body);
-
       if (error) {
         return next(error);
       }
-
       try {
         await RefreshToken.deleteOne({ token: req.body.refresh_token });
       } catch (err) {
@@ -171,19 +149,13 @@ const AuthController = {
   async destroy(req, res, next) {
     const { userId } = req.params;
     try {
-      // Ensure the user exists
       const user = await User.findById("6804cd4d0d6481a34cdf855a");
       console.log(user)
       if (!user) {
         return next(CustomErrorHandler.notFound('User not found.'));
       }
-
-      // Delete the user from the database
       await User.findByIdAndDelete(userId);
-
-      // Optionally, you may want to also delete associated data such as refresh tokens
       await RefreshToken.deleteMany({ userId });
-
       res.status(200).json({
         message: 'User deleted successfully',
         status: 200,
@@ -193,8 +165,4 @@ const AuthController = {
     }
   }
 };
-
-
-
-
 export default AuthController;

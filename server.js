@@ -17,7 +17,8 @@ const app = express();
 // import path from 'path';
 import cors from 'cors';
 import { DATABASE_URL } from './src/config/index.js';
-
+import auth from './src/middlewares/auth.js';
+import admin from './src/middlewares/admin.js';
 // Database connection
 // mongoose.connect(DB_URL, {
 //     useNewUrlParser: true,
@@ -50,7 +51,7 @@ app.use((err, req, res, next) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/api', authRoutes);
-app.use('/api', VariablesRoutes);
+app.use('/api',[auth], VariablesRoutes);
 app.use('/api', Designations);
 app.use('/api', QualificationTypesRoutes);
 app.use('/api', SkillTypesRoutes);
