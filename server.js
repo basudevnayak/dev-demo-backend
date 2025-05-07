@@ -84,6 +84,7 @@ app.get('/qrcode/:phone', async (req, res) => {
 
   try {
     const qrDataUrl = await QRCode.toDataURL(telUrl);
+    res.send(qrDataUrl)
     res.send(`
       <h2>Scan to Call: ${phone}</h2>
       <img src="${qrDataUrl}" alt="QR Code" />
