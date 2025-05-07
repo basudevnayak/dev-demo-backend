@@ -411,7 +411,8 @@ const StatesController = {
                 });
             }
             const list=state.map((_data)=>({
-                value:_data.id,
+                country_id:_data.country_id,
+                value:_data._id,
                 label:_data.name
             }))
             return res.status(200).json({

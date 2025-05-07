@@ -71,7 +71,7 @@ app.use('/api', ExpenseTypesRoutes);
 app.use('/api', ArrangementTypesRoutes);
 
 app.use('/api', CountriesRoutes);
-// app.use('/api', StatesRoutes);
+app.use('/api', StatesRoutes);
 // app.use('/api', QrCodeRoutes)
 app.get('/qrcode/:phone', async (req, res) => {
   const { phone } = req.params;
