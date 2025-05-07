@@ -15,4 +15,4 @@ export {default as ArrangementTypesController} from "./Departments/ArrangementTy
 export {default as CountriesController} from "./common/CountriesControllers.js";
 export {default as StatesController} from "./common/StatesController.js";
 
-export {default as QrCodeController} from "./qrcode/QrCodeController.js"
+export {default as QrCodeController} from "./qrCode/QrCodeController.js"
