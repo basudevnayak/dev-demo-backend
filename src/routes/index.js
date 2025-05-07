@@ -14,4 +14,4 @@ export { default as ArrangementTypesRoutes } from './ArrangementTypesRoutes.js';
 
 export { default as CountriesRoutes } from './common/CountriesRoutes.js';
 export { default as StatesRoutes } from './common/StatesRoutes.js';
-export {default as QrCodeRoutes} from "./qrCode/QrCodeRoutes.js"
+// export {default as QrCodeRoutes} from "./qrCode/QrCodeRoutes.js"

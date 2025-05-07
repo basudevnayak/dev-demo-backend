@@ -7,7 +7,8 @@ import {
   WarningTypesRoutes,
   TerminationTypesRoutes, DocumentsTypesRoutes,
   BusinessNatureTypesRoutes, ExpenseTypesRoutes,
-  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, QrCodeRoutes
+  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, 
+  // QrCodeRoutes
 } from './src/routes/index.js';
 import { connect } from './src/config/connect.js';
 import dotenv from 'dotenv';
@@ -71,27 +72,27 @@ app.use('/api', ArrangementTypesRoutes);
 
 app.use('/api', CountriesRoutes);
 app.use('/api', StatesRoutes);
-app.use('/api', QrCodeRoutes)
-app.get('/qrcode/:phone', async (req, res) => {
-  const { phone } = req.params;;
-  console.log(req.params)
-  if (!phone) {
-    return res.status(400).send('Phone number is required');
-  }
+// app.use('/api', QrCodeRoutes)
+// app.get('/qrcode/:phone', async (req, res) => {
+//   const { phone } = req.params;;
+//   console.log(req.params)
+//   if (!phone) {
+//     return res.status(400).send('Phone number is required');
+//   }
 
-  const telUrl = `tel:${phone}`;
+//   const telUrl = `tel:${phone}`;
 
-  try {
-    const qrDataUrl = await QRCode.toDataURL(telUrl);
-    res.send(`
-      <h2>Scan to Call: ${phone}</h2>
-      <img src="${qrDataUrl}" alt="QR Code" />
-    `);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Failed to generate QR Code');
-  }
-});
+//   try {
+//     const qrDataUrl = await QRCode.toDataURL(telUrl);
+//     res.send(`
+//       <h2>Scan to Call: ${phone}</h2>
+//       <img src="${qrDataUrl}" alt="QR Code" />
+//     `);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Failed to generate QR Code');
+//   }
+// });
 
 
 
