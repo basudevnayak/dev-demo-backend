@@ -1,5 +1,5 @@
 import express from 'express';
 const router = express.Router();
-// import { qrCodeController } from '../../controllers/index.js';
-// router.get("/qrcode/:phone", qrCodeController.qrCodeGenerate);
+import { QrCodeController } from '../../controllers/index.js';
+router.get("/qrcode/:phone", QrCodeController.qrCodeGenerate);
 export default router;
