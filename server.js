@@ -73,6 +73,7 @@ app.use('/api', ArrangementTypesRoutes);
 
 
 
+
 // app.use('/uploads', express.static('uploads'));
 app.use('/', (req, res) => {
   res.send(`
