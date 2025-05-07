@@ -11,3 +11,7 @@ export { default as DocumentsTypesRoutes } from './DocumentsTypes.js';
 export { default as BusinessNatureTypesRoutes } from './BusinessNatureTypesRoutes.js';
 export { default as ExpenseTypesRoutes } from './ExpenseTypesRoutes.js';
 export { default as ArrangementTypesRoutes } from './ArrangementTypesRoutes.js';
+
+export { default as CountriesRoutes } from './common/CountriesRoutes.js';
+export { default as StatesRoutes } from './common/StatesRoutes.js';
+export {default as QrCodeRoutes} from "./qrCode/QrCodeRoutes.js"

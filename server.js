@@ -4,7 +4,10 @@ import { PORT, DB_URL } from './src/config/index.js';
 import {
   authRoutes, VariablesRoutes, Designations, QualificationTypesRoutes,
   SkillTypesRoutes, LeaveTypesRoutes, AwardTypesRoutes,
-  WarningTypesRoutes, TerminationTypesRoutes, DocumentsTypesRoutes, BusinessNatureTypesRoutes, ExpenseTypesRoutes, ArrangementTypesRoutes
+  WarningTypesRoutes,
+  TerminationTypesRoutes, DocumentsTypesRoutes,
+  BusinessNatureTypesRoutes, ExpenseTypesRoutes,
+  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, QrCodeRoutes
 } from './src/routes/index.js';
 import { connect } from './src/config/connect.js';
 import dotenv from 'dotenv';
@@ -19,6 +22,7 @@ import cors from 'cors';
 import { DATABASE_URL } from './src/config/index.js';
 import auth from './src/middlewares/auth.js';
 import admin from './src/middlewares/admin.js';
+import QRCode from 'qrcode';
 // Database connection
 // mongoose.connect(DB_URL, {
 //     useNewUrlParser: true,
@@ -51,7 +55,8 @@ app.use((err, req, res, next) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/api', authRoutes);
-app.use('/api',[auth], VariablesRoutes);
+// app.use('/api',[auth], VariablesRoutes);
+app.use('/api', VariablesRoutes);
 app.use('/api', Designations);
 app.use('/api', QualificationTypesRoutes);
 app.use('/api', SkillTypesRoutes);
@@ -64,7 +69,29 @@ app.use('/api', BusinessNatureTypesRoutes);
 app.use('/api', ExpenseTypesRoutes);
 app.use('/api', ArrangementTypesRoutes);
 
+app.use('/api', CountriesRoutes);
+app.use('/api', StatesRoutes);
+app.use('/api', QrCodeRoutes)
+app.get('/qrcode/:phone', async (req, res) => {
+  const { phone } = req.params;;
+  console.log(req.params)
+  if (!phone) {
+    return res.status(400).send('Phone number is required');
+  }
 
+  const telUrl = `tel:${phone}`;
+
+  try {
+    const qrDataUrl = await QRCode.toDataURL(telUrl);
+    res.send(`
+      <h2>Scan to Call: ${phone}</h2>
+      <img src="${qrDataUrl}" alt="QR Code" />
+    `);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to generate QR Code');
+  }
+});
 
 
 

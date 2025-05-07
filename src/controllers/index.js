@@ -11,3 +11,8 @@ export {default as DocumentsTypesController} from "./Departments/DocumentsTypesC
 export {default as BusinessNatureTypesController} from "./Departments/BusinessNatureTypesController.js";
 export {default as ExpenseTypesController} from "./Departments/ExpenseTypesController.js";
 export {default as ArrangementTypesController} from "./Departments/ArrangementTypesController.js";
+
+export {default as CountriesController} from "./common/CountriesControllers.js";
+export {default as StatesController} from "./common/StatesController.js";
+
+export {default as qrCodeController} from "./qrcode/QrCodeController.js"
