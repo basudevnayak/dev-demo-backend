@@ -14,3 +14,5 @@ export {default as ExpenseTypes} from './Departments/ExpenseTypes.js';
 export {default as ArrangementTypes} from './Departments/ArrangementTypes.js';
 export {default as Countries} from './common/Countries.js';
 export {default as States} from './common/States.js';
+
+export {default as ClientGroup} from "./Organization/ClientGroup.js"

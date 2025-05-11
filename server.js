@@ -7,7 +7,7 @@ import {
   WarningTypesRoutes,
   TerminationTypesRoutes, DocumentsTypesRoutes,
   BusinessNatureTypesRoutes, ExpenseTypesRoutes,
-  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, 
+  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, OrganizationRoutes
   // QrCodeRoutes
 } from './src/routes/index.js';
 import { connect } from './src/config/connect.js';
@@ -72,6 +72,7 @@ app.use('/api', ArrangementTypesRoutes);
 
 app.use('/api', CountriesRoutes);
 app.use('/api', StatesRoutes);
+app.use('/api/Organization', OrganizationRoutes);
 // app.use('/api', QrCodeRoutes)
 app.get('/qrcode/:phone', async (req, res) => {
   const { phone } = req.params;
@@ -122,7 +123,7 @@ app.get('/qrcode/api/:phone', async (req, res) => {
 
 
 
-// app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads'));
 app.use('/', (req, res) => {
   res.send(`
   <h1>Welcome to E-commerce Rest APIs</h1>
