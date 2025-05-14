@@ -12,9 +12,14 @@ export {default as BusinessNatureTypesController} from "./Departments/BusinessNa
 export {default as ExpenseTypesController} from "./Departments/ExpenseTypesController.js";
 export {default as ArrangementTypesController} from "./Departments/ArrangementTypesController.js";
 
+
+
 export {default as CountriesController} from "./common/CountriesControllers.js";
 export {default as StatesController} from "./common/StatesController.js";
 
 export {default as QrCodeController} from "./qrCode/QrCodeController.js";
 
-export {default as OrganizationController} from "./Organization/OrganizationController.js";
+export {default as ClientGroupController} from "./Organization/ClientGroupController.js";
+export {default as CompanyController} from "./Organization/CompanyController.js";
+export{default as LocationController} from "./Organization/LocationController.js"
+export {default as SubLocationController} from "./Organization/SubLocationController.js"

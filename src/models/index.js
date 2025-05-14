@@ -15,4 +15,7 @@ export {default as ArrangementTypes} from './Departments/ArrangementTypes.js';
 export {default as Countries} from './common/Countries.js';
 export {default as States} from './common/States.js';
 
-export {default as ClientGroup} from "./Organization/ClientGroup.js"
+export {default as ClientGroup} from "./Organization/ClientGroup.js";
+export {default as Company} from "./Organization/Company.js";
+export{default as Location} from "./Organization/Location.js";
+export {default as SubLocation} from "./Organization/SubLocation.js"

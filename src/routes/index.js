@@ -12,8 +12,13 @@ export { default as BusinessNatureTypesRoutes } from './BusinessNatureTypesRoute
 export { default as ExpenseTypesRoutes } from './ExpenseTypesRoutes.js';
 export { default as ArrangementTypesRoutes } from './ArrangementTypesRoutes.js';
 
+
 export { default as CountriesRoutes } from './common/CountriesRoutes.js';
 export { default as StatesRoutes } from './common/StatesRoutes.js';
 // export {default as QrCodeRoutes} from "./qrCode/QrCodeRoutes.js"
 
-export {default as OrganizationRoutes} from "./Organization/OrganizationRoutes.js"
+export {default as ClientGroupRoutes} from "./Organization/ClientGroupRoutes.js";
+export {default as CompanyRoutes} from "./Organization/CompanyRoutes.js";
+export {default as LocationRoutes} from "./Organization/LocationRoutes.js";
+export {default as SubLocationRoutes} from "./Organization/SubLocationRoutes.js"
+

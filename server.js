@@ -7,7 +7,8 @@ import {
   WarningTypesRoutes,
   TerminationTypesRoutes, DocumentsTypesRoutes,
   BusinessNatureTypesRoutes, ExpenseTypesRoutes,
-  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, OrganizationRoutes
+  ArrangementTypesRoutes, CountriesRoutes, StatesRoutes, 
+  ClientGroupRoutes,CompanyRoutes,LocationRoutes,SubLocationRoutes
   // QrCodeRoutes
 } from './src/routes/index.js';
 import { connect } from './src/config/connect.js';
@@ -72,55 +73,26 @@ app.use('/api', ArrangementTypesRoutes);
 
 app.use('/api', CountriesRoutes);
 app.use('/api', StatesRoutes);
-app.use('/api/Organization', OrganizationRoutes);
+app.use('/api/Organization', ClientGroupRoutes);
+app.use('/api/Organization', CompanyRoutes);
+app.use('/api/Organization', LocationRoutes);
+app.use('/api/Organization', SubLocationRoutes);
+
+
 // app.use('/api', QrCodeRoutes)
-app.get('/qrcode/:phone', async (req, res) => {
-  const { phone } = req.params;
-  if (!phone) return res.status(400).send('Phone number is required');
 
-  const telUrl = `tel:${phone}`;
-
-  try {
-    const qrDataUrl = await QRCode.toDataURL(telUrl);
-    const img = Buffer.from(qrDataUrl.split(",")[1], 'base64');
-    res.writeHead(200, {
-      'Content-Type': 'image/png',
-      'Content-Length': img.length
-    });
-    res.end(img);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Failed to generate QR Code');
-  }
-});
-app.get('/qrcode/api/:phone', async (req, res) => {
-  const { phone } = req.params;;
-  console.log(req.params)
-  if (!phone) {
-    return res.status(400).send('Phone number is required');
-  }
-
-  const telUrl = `tel:${phone}`;
-
-  try {
-    const qrDataUrl = await QRCode.toDataURL(telUrl);
-    return res.status(201).json({
-      message: 'Created successfully',
-      status: 201,
-      data: qrDataUrl,
-  });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Failed to generate QR Code');
-  }
-});
+// import { multiUploader } from './src/utils/multiUploader.js';
 
 
 
 
 
 
-
+// app.put('/aaa/company',multiUploader,  (req, res) => {
+//   console.log('Form Fields:', req.body);
+//   console.log('Uploaded File:', req.file);
+//   res.json({ data: req.body });
+// });
 
 
 app.use('/uploads', express.static('uploads'));
