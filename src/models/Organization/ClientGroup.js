@@ -24,6 +24,7 @@ const ClientGroupSchema = new mongoose.Schema({
         }
     },
     Remark: { type: String, default: '' },
+      serial_id: { type: Number, unique: true }
 }, {
     timestamps: true // optional: adds createdAt and updatedAt fields
 });

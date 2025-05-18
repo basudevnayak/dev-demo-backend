@@ -26,7 +26,10 @@ const OrganizationController = {
         }
         const { GroupName, GroupCode, Country, Remark } = req.body;
         try {
-            const exists = await ClientGroup.findOne({ GroupName });
+            const [exists, lastEntry] = await Promise.all([
+                ClientGroup.findOne({ GroupName }),
+                ClientGroup.findOne().sort({ serial_id: -1 }).select('serial_id')
+            ]);
             if (exists) {
                 return res.status(409).json({
                     message: 'Department already exists',
@@ -34,9 +37,11 @@ const OrganizationController = {
                     data: exists,
                 });
             }
-
+            const lastSerialId = lastEntry?.serial_id || 11100;
+            const serial_id = lastSerialId + 1;
             const department = new ClientGroup({
                 GroupName, GroupCode, Country, Remark,
+                serial_id,
                 updatedAt: new Date(),
             });
             const savedDepartment = await department.save();
@@ -184,9 +189,9 @@ const OrganizationController = {
                 ..._data,
                 GroupName: capitalize(_data.GroupName), // Capitalize the name
                 GroupCode: _data.GroupCode,
-                Remark:_data.Remark,
+                Remark: _data.Remark,
                 id: _data._id,
-                Country:_data.Country.label
+                Country: _data.Country.label
             }));
             // Return the response
             return res.status(200).json({

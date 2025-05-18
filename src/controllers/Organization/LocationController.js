@@ -40,7 +40,10 @@ const LocationController = {
             });
         }
         try {
-            const existingCompany = await Location.findOne({ Location: req.body.Location });
+            const [existingCompany, lastEntry] = await Promise.all([
+                Location.findOne({ Location: req.body.Location }),
+                Location.findOne().sort({ serial_id: -1 }).select('serial_id')
+            ]);
             if (existingCompany) {
                 return res.status(409).json({
                     message: 'already exists',
@@ -48,8 +51,11 @@ const LocationController = {
                     data: existingCompany,
                 });
             }
+            const lastSerialId = lastEntry?.serial_id || 11100;
+            const serial_id = lastSerialId + 1;
             const newLocation = new Location({
-                ...req.body,
+                ...{ ...req.body, serial_id },
+                serial_id,
                 updatedAt: new Date(),
             });
 
@@ -106,7 +112,7 @@ const LocationController = {
             // 2. Proceed to update if no duplicate company name is found
             const updatedLocation = await Location.findByIdAndUpdate(
                 id,
-                {$set: { ...res.body,  updatedAt: new Date()}},
+                { $set: { ...res.body, updatedAt: new Date() } },
                 { new: true, runValidators: true }
             ).select('-password'); // Exclude password field from the response
 
@@ -228,22 +234,18 @@ const LocationController = {
     },
 
     async show(req, res, next) {
-        let document;
         try {
-            document = await Company.findOne({ _id: req.params.id }).select(
-                '-updatedAt -__v'
-            );
-
-            // If the document is found, convert the 'name' field to camelCase
-            if (document) {
-                document.name = toCamelCase(document.name);
-            }
+            const documents = await Location.find({ serial_id: req.params.id }).select('-updatedAt -__v');
+            return res.status(200).json({
+                status: 200,
+                success: true,
+                message: 'Fetched successfully',
+                list: documents
+            });
 
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-
-        return res.json(document);
     },
     async getProducts(req, res, next) {
         let documents;

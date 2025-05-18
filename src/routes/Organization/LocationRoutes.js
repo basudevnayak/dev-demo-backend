@@ -5,6 +5,7 @@ const router = express.Router();
 router.post("/location", LocationController.store);
 router.get("/location", LocationController.index);
 router.put('/location/:id', LocationController.update);
+router.get('/location/:id', LocationController.show);
 router.delete('/location', LocationController.destroy);
 
 export default router;

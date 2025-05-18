@@ -60,96 +60,6 @@ const SubLocationController = {
             return next(CustomErrorHandler.serverError(err.message));
         }
     },
-    // async update(req, res, next) {
-    //     const { id } = req.params;
-    //     const companyValidationSchema = Joi.object({
-    //         Location: Joi.string().required(),
-    //         Company: Joi.object({
-    //             label: Joi.string().required(),
-    //             value: Joi.string().required() // ObjectId as string
-    //         }).required(),
-    //         Country: Joi.object({
-    //             label: Joi.string().required(),
-    //             value: Joi.string().required(),
-    //             dialCode: Joi.string().required()
-    //         }).required(),
-    //         State: Joi.object({
-    //             label: Joi.string().required(),
-    //             value: Joi.string().required()
-    //         }).required(),
-    //         LocationCode: Joi.string().required(),
-    //         StateCode: Joi.string().required(),
-    //         Remark: Joi.string().allow('', null)
-    //     });
-
-    //     // Validate the incoming request body
-    //     const { error } = companyValidationSchema.validate(req.body);
-    //     if (error) {
-    //         return res.status(400).json({ message: error.details[0].message });
-    //     }
-
-
-
-
-    //     try {
-    //         // 1. Check if another company already exists with the same CompanyName
-    //         const existingCompanyWithSameName = await Location.findOne({
-    //             Location: req.body.Location,
-    //             _id: { $ne: id }, // Exclude the current company being updated
-    //         });
-    //         if (existingCompanyWithSameName) {
-    //             return res.status(409).json({ message: 'Company name already exists' });
-    //         }
-    //         // 2. Proceed to update if no duplicate company name is found
-    //         const updatedLocation = await Location.findByIdAndUpdate(
-    //             id,
-    //             {$set: { ...res.body,  updatedAt: new Date()}},
-    //             { new: true, runValidators: true }
-    //         ).select('-password'); // Exclude password field from the response
-
-    //         // If company is not found, send a 404 error
-    //         if (!updatedLocation) {
-    //             return res.status(404).json({ message: 'Company not found' });
-    //         }
-    //         // Respond with the updated company details
-    //         res.status(200).json({
-    //             message: 'Updated successfully',
-    //             status: 200,
-    //             data: updatedLocation,
-    //         });
-    //     } catch (err) {
-    //         // Handle any errors that occur during the process
-    //         return next(CustomErrorHandler.serverError(err.message));
-    //     }
-    // },
-    // async destroy(req, res, next) {
-    //     try {
-    //         let ids = [];
-
-    //         if (Array.isArray(req.body.ids)) {
-    //             ids = req.body.ids;
-    //         } else if (Array.isArray(req.body.data)) {
-    //             ids = req.body.data.map(item => item.id);
-    //         }
-
-    //         if (ids.length === 0) {
-    //             return res.status(400).json({
-    //                 message: 'No department IDs provided for deletion.',
-    //                 status: 400,
-    //             });
-    //         }
-
-    //         const result = await Location.deleteMany({ _id: { $in: ids } });
-
-    //         return res.status(200).json({
-    //             message: `${result.deletedCount} Deleted successfully.`,
-    //             status: 200,
-    //             data: result,
-    //         });
-    //     } catch (err) {
-    //         return next(CustomErrorHandler.serverError(err.message));
-    //     }
-    // },
     async index(req, res, next) {
         try {
             // Destructure parameters from the request query
@@ -224,24 +134,22 @@ const SubLocationController = {
         }
     },
 
-    // async show(req, res, next) {
-    //     let document;
-    //     try {
-    //         document = await Company.findOne({ _id: req.params.id }).select(
-    //             '-updatedAt -__v'
-    //         );
+   async show(req, res, next) {
+        try {
+            const documents = await SubLocation.find({ serial_id: req.params.id }).select('-updatedAt -__v');
+            return res.status(200).json({
+                status: 200,
+                success: true,
+                message: 'Fetched successfully',
+                list:documents
+            });
 
-    //         // If the document is found, convert the 'name' field to camelCase
-    //         if (document) {
-    //             document.name = toCamelCase(document.name);
-    //         }
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
 
-    //     } catch (err) {
-    //         return next(CustomErrorHandler.serverError());
-    //     }
-
-    //     return res.json(document);
-    // },
+        return res.json(document);
+    },
     // async getProducts(req, res, next) {
     //     let documents;
     //     try {

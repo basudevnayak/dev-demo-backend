@@ -46,47 +46,11 @@ const CompanyController = {
                 status: 400,
             });
         }
-        const {
-            CompanyName,
-            CompanyCode,
-            ClientGroup,
-            CompanyEntityType,
-            TradingLegalName,
-            RegistrationNumberCIN,
-            DateOfIncorporation,
-            AddressLine1,
-            AddressLine2,
-            Country,
-            StateProvince,
-            City,
-            ZIPPincode,
-            Phone,
-            Email,
-            Website,
-            Remark
-        } = req.body;
-        const data = {
-            CompanyName,
-            CompanyCode,
-            ClientGroup: JSON.parse(ClientGroup),
-            CompanyEntityType: JSON.parse(CompanyEntityType),
-            TradingLegalName,
-            RegistrationNumberCIN,
-            DateOfIncorporation,
-            AddressLine1,
-            AddressLine2,
-            Country: JSON.parse(Country),
-            StateProvince: JSON.parse(StateProvince),
-            City,
-            ZIPPincode,
-            Phone,
-            Email,
-            Website,
-            Remark,
-            companyLogo: avatarPath
-        };
         try {
-            const existingCompany = await Company.findOne({ CompanyName: req.body.CompanyName });
+            const [existingCompany, lastEntry] = await Promise.all([
+                Company.findOne({ CompanyName: req.body.CompanyName }),
+                Company.findOne().sort({ serial_id: -1 }).select('serial_id')
+            ]);
             if (existingCompany) {
                 return res.status(409).json({
                     message: 'already exists',
@@ -94,6 +58,48 @@ const CompanyController = {
                     data: existingCompany,
                 });
             }
+            const lastSerialId = lastEntry?.serial_id || 11100;
+            const serial_id = lastSerialId + 1;
+            const {
+                CompanyName,
+                CompanyCode,
+                ClientGroup,
+                CompanyEntityType,
+                TradingLegalName,
+                RegistrationNumberCIN,
+                DateOfIncorporation,
+                AddressLine1,
+                AddressLine2,
+                Country,
+                StateProvince,
+                City,
+                ZIPPincode,
+                Phone,
+                Email,
+                Website,
+                Remark
+            } = req.body;
+            const data = {
+                CompanyName,
+                CompanyCode,
+                ClientGroup: JSON.parse(ClientGroup),
+                CompanyEntityType: JSON.parse(CompanyEntityType),
+                TradingLegalName,
+                RegistrationNumberCIN,
+                DateOfIncorporation,
+                AddressLine1,
+                AddressLine2,
+                Country: JSON.parse(Country),
+                StateProvince: JSON.parse(StateProvince),
+                City,
+                ZIPPincode,
+                Phone,
+                Email,
+                Website,
+                serial_id,
+                Remark,
+                companyLogo: avatarPath
+            };
             const newCompany = new Company({
                 ...data,
                 updatedAt: new Date(),
@@ -337,16 +343,14 @@ const CompanyController = {
     },
 
     async show(req, res, next) {
-        let document;
         try {
-            document = await Company.findOne({ _id: req.params.id }).select(
-                '-updatedAt -__v'
-            );
-
-            // If the document is found, convert the 'name' field to camelCase
-            if (document) {
-                document.name = toCamelCase(document.name);
-            }
+            const documents = await Company.find({ serial_id: req.params.id }).select('-updatedAt -__v');
+            return res.status(200).json({
+                status: 200,
+                success: true,
+                message: 'Fetched successfully',
+                list:documents
+            });
 
         } catch (err) {
             return next(CustomErrorHandler.serverError());

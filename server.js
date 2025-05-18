@@ -54,8 +54,8 @@ app.use((err, req, res, next) => {
     status: 500,
   });
 });
-app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use('/api', authRoutes);
 // app.use('/api',[auth], VariablesRoutes);
 app.use('/api', VariablesRoutes);
