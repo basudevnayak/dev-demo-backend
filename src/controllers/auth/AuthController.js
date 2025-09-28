@@ -73,7 +73,7 @@ const AuthController = {
       // Generate tokens (access token and refresh token)
       const access_token = JwtService.sign({ _id: result._id, role: result.role });
       const refresh_token = JwtService.sign({ _id: result._id, role: result.role }, '1y', REFRESH_SECRET);
-
+      res.cookie('token', access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 1 day
       // Respond with the user data and the tokens
       res.json({
         user: {
@@ -112,6 +112,7 @@ const AuthController = {
       const access_token = JwtService.sign({ _id: user._id, role: user.role });
       const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
       await RefreshToken.create({ token: refresh_token });
+      res.cookie('token', access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 1 day
       res.json({
         user: {
           id: user._id,
@@ -119,12 +120,12 @@ const AuthController = {
           email: user.email,
           avatar: user.avatar,
           authority: user.role === 'admin' ? ['admin', 'user'] : ['user'],
-          accountUserName: user.accountUserName || user.email, 
+          accountUserName: user.accountUserName || user.email,
         },
         token: access_token,
       });
     } catch (err) {
-      return next(err); 
+      return next(err);
     }
   },
   async logout(req, res, next) {

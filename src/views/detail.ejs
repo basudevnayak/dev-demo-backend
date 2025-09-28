@@ -1,0 +1,12 @@
+<%- include('layout', {title:'Policy Detail'}) %>
+<div class="card p-4">
+  <h3><%= policy.holderName %></h3>
+  <p><strong>Policy No:</strong> <%= policy.policyNumber %></p>
+  <p><strong>Agent:</strong> <%= policy.agentName %></p>
+  <p><strong>Company:</strong> <%= policy.company %></p>
+  <p><strong>Create Date:</strong> <%= policy.createDate ? policy.createDate.toDateString() : '-' %></p>
+  <p><strong>Next Due:</strong> <%= policy.nextDueDate ? policy.nextDueDate.toDateString() : '-' %></p>
+  <p><strong>Premium:</strong> <%= policy.premium %></p>
+  <p><strong>Total Value:</strong> <%= policy.totalValue %></p>
+  <a class="btn btn-secondary" href="/policies">Back</a>
+</div>

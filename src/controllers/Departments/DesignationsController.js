@@ -131,6 +131,7 @@ const DepartmentsController = {
     },
 
     async index(req, res, next) {
+
         try {
             // Destructure parameters from the request query
             const {
@@ -148,7 +149,6 @@ const DepartmentsController = {
                 sortOrder: req.query['sort[order]'] || 'desc',
                 purchaseChannel: req.query.purchaseChannel || []
             };
-
             // Convert page and limit to numbers
             const pageNum = Number(page);
             const limitNum = Number(limit);
