@@ -1,0 +1,306 @@
+<!-- Dashboard Section -->
+<div id="dashboard-section" class="content-section active">
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-number">24</div>
+            <div class="stat-label">Total Policies</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number">5</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-number">19</div>
+            <div class="stat-label">Active</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-number">$45K</div>
+            <div class="stat-label">Total Value</div>
+        </div>
+    </div>
+
+    <!-- Recent Policies -->
+    <div class="recent-policies">
+        <div class="section-header">
+            <i class="fas fa-history"></i>
+            Recent Policies
+        </div>
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Policy #</th>
+                        <th>Holder Name</th>
+                        <th>Type</th>
+                        <th>Premium</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody id="recentPoliciesTableBody">
+                  
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- All Policies Section -->
+<div id="policies-section" class="content-section">
+    <div class="recent-policies">
+        <div class="section-header">
+            <i class="fas fa-list"></i>
+            Policy List
+            <div class="ms-auto">
+                <button class="btn btn-success btn-sm me-2">
+                    <i class="fas fa-download me-1"></i>Export
+                </button>
+                <button class="btn btn-secondary btn-sm">
+                    <i class="fas fa-filter me-1"></i>Filter
+                </button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="custom-table" id="allPoliciesTable">
+                <thead>
+                    <tr>
+                        <th>Policy #</th>
+                        <th>Holder Name</th>
+                        <th>Policy Type</th>
+                        <th>Premium</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="policiesTableBody">
+                    <!-- Dynamic content will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Create Policy Section -->
+<div id="create-policy-section" class="content-section">
+    <div class="recent-policies">
+        <div class="section-header">
+            <i class="fas fa-form"></i>
+            Policy Information
+        </div>
+        <div style="padding: 2rem;">
+            <form id="createPolicyForm">
+                 <input type="hidden" class="form-control" id="update" name="update" readonly>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="userGmail" class="form-label">User Gmail</label>
+                        <input type="text" class="form-control" id="userGmail" name="userGmail" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="policyNumber" class="form-label">Policy Number</label>
+                        <input type="text" class="form-control" id="policyNumber" name="policyNumber" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="holderName" class="form-label">Policy Holder Name</label>
+                        <input type="text" class="form-control" id="holderName" name="holderName" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="agentName" class="form-label">Agent Name</label>
+                        <input type="text" class="form-control" id="agentName" name="agentName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="policyCompany" class="form-label">Policy Company</label>
+                        <select class="form-select" id="policyCompany" name="policyCompany" required>
+                            <option value="">Select Company</option>
+                            <option value="ABC Insurance">ABC Insurance</option>
+                            <option value="XYZ Life">XYZ Life</option>
+                            <option value="Global Health">Global Health</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="createDate" class="form-label">Policy Create Date</label>
+                        <input type="date" class="form-control" id="createDate" name="createDate" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="policyPremium" class="form-label">Policy Premium</label>
+                        <input type="number" class="form-control" id="policyPremium" name="policyPremium" step="0.01"
+                            required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="installmentFreq" class="form-label">Installment Frequency</label>
+                        <select class="form-select" id="installmentFreq" name="installmentFreq" required>
+                            <option value="">Select Frequency</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Quarterly">Quarterly</option>
+                            <option value="Half-yearly">Half-yearly</option>
+                            <option value="Yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="planTerm" class="form-label">Plan Term (Years)</label>
+                        <input type="number" class="form-control" id="planTerm" name="planTerm" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="endDate" class="form-label">Policy End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="totalValue" class="form-label">Total Value of Policy</label>
+                        <input type="hidden" class="form-control" id="totalValue" name="totalValue" step="0.01"
+                            readonly>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg" onclick="handleCreatePolicy(event)">
+                        <i class="fas fa-save me-2"></i>Save Policy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- My Policies Section -->
+<div id="my-policies-section" class="content-section">
+    <div class="row" id="myPoliciesContainer">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="recent-policies">
+                <div class="section-header">
+                    <i class="fas fa-heartbeat"></i>
+                    Life Insurance
+                    <span class="ms-auto">
+                        <span class="status-badge status-active">Active</span>
+                    </span>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p class="mb-2"><strong>Policy #:</strong> POL001</p>
+                    <p class="mb-2"><strong>Premium:</strong> $2,500</p>
+                    <p class="mb-3"><strong>Due:</strong> Mar 15, 2024</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-sm">View Details</button>
+                        <button class="btn btn-success btn-sm">Pay Premium</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="recent-policies">
+                <div class="section-header">
+                    <i class="fas fa-hospital"></i>
+                    Health Insurance
+                    <span class="ms-auto">
+                        <span class="status-badge status-pending">Pending</span>
+                    </span>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <p class="mb-2"><strong>Policy #:</strong> POL002</p>
+                    <p class="mb-2"><strong>Premium:</strong> $1,200</p>
+                    <p class="mb-3"><strong>Due:</strong> Feb 28, 2024</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary btn-sm">View Details</button>
+                        <button class="btn btn-danger btn-sm">Pay Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Section -->
+<div id="pending-section" class="content-section">
+    <div class="recent-policies">
+        <div class="section-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            Attention Required
+        </div>
+        <div class="table-responsive">
+            <table class="custom-table" >
+                <thead>
+                    <tr>
+                        <th>Policy #</th>
+                        <th>Holder Name</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <!-- <th>Actions</th> -->
+                    </tr>
+                </thead>
+                <tbody id="pendingPoliciesTableBody">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Login/Register Section -->
+<div id="login-register-section" class="content-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="recent-policies">
+                <div class="section-header">
+                    <i class="fas fa-user"></i>
+                    Account Access
+                </div>
+                <div style="padding: 2rem;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-center mb-4">Login</h5>
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="loginEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="loginEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-center mb-4">Register</h5>
+                            <form id="registerForm">
+                                <div class="mb-3">
+                                    <label for="registerEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="registerEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="registerPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <i class="fas fa-user-plus me-2"></i>Register
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

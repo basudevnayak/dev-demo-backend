@@ -1,0 +1,26 @@
+<%- include('layout', {title: policy ? 'Edit Policy' : 'Create Policy'}) %>
+<form action="<%= policy ? '/policies/' + policy._id + '?_method=PUT' : '/policies' %>" method="POST" class="card p-4">
+  <h3 class="mb-3"><%= policy ? 'Edit Policy' : 'Create Policy' %></h3>
+  <div class="mb-3"><label>Policy Holder Name</label><input name="holderName" class="form-control" required value="<%= policy ? policy.holderName : '' %>"></div>
+  <div class="mb-3"><label>Email</label><input name="holderEmail" type="email" class="form-control" value="<%= policy ? policy.holderEmail : '' %>"></div>
+  <div class="mb-3"><label>Policy Number</label><input name="policyNumber" class="form-control" value="<%= policy ? policy.policyNumber : '' %>"></div>
+  <div class="mb-3"><label>Agent Name</label><input name="agentName" class="form-control" value="<%= policy ? policy.agentName : '' %>"></div>
+  <div class="mb-3"><label>Company</label><input name="company" class="form-control" value="<%= policy ? policy.company : '' %>"></div>
+  <div class="mb-3 row">
+    <div class="col-md-6"><label>Create Date</label><input name="createDate" type="date" class="form-control" value="<%= policy && policy.createDate ? policy.createDate.toISOString().slice(0,10) : '' %>"></div>
+    <div class="col-md-6"><label>Premium</label><input name="premium" type="number" step="0.01" class="form-control" value="<%= policy ? policy.premium : '' %>"></div>
+  </div>
+  <div class="mb-3 row">
+    <div class="col-md-6"><label>Frequency</label>
+      <select name="frequency" class="form-control">
+        <option value="monthly" <%= policy && policy.frequency==='monthly' ? 'selected':'' %>>Monthly</option>
+        <option value="quarterly" <%= policy && policy.frequency==='quarterly' ? 'selected':'' %>>Quarterly</option>
+        <option value="half-yearly" <%= policy && policy.frequency==='half-yearly' ? 'selected':'' %>>Half-Yearly</option>
+        <option value="yearly" <%= policy && policy.frequency==='yearly' ? 'selected':'' %>>Yearly</option>
+      </select>
+    </div>
+    <div class="col-md-6"><label>Term (years)</label><input name="term" type="number" class="form-control" value="<%= policy ? policy.term : 1 %>"></div>
+  </div>
+  <div class="mb-3"><label>Next Due Date</label><input name="nextDueDate" type="date" class="form-control" value="<%= policy && policy.nextDueDate ? policy.nextDueDate.toISOString().slice(0,10) : '' %>"></div>
+  <div class="d-flex gap-2"><button class="btn btn-primary">Save Policy</button><a class="btn btn-secondary" href="/policies">Cancel</a></div>
+</form>

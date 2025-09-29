@@ -2,26 +2,19 @@ import CustomErrorHandler from '../utils/CustomErrorHandler.js';
 import JwtService from '../utils/JwtService.js';
 
 const auth = async (req, res, next) => {
-    let authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return next(CustomErrorHandler.unAuthorized());
-    }
+  const token = req?.cookies?.token;
 
-    const token = authHeader.split(' ')[1];
+  if (!token) return res.redirect('/');
 
-    try {
-        const { _id, role } = await JwtService.verify(token);
-        const user = {
-            _id,
-            role
-        }
-        req.user = user;
-        next();
-
-    } catch(err) {
-        return next(CustomErrorHandler.unAuthorized());
-    }
-
-}
+  try {
+    const { _id, role } = await JwtService.verify(token);
+    req.user = { _id, role };
+    next();
+    // return res.redirect('/dashboard');
+  } catch (err) {
+    console.log("Token invalid:", err.message);
+    return res.redirect('/');
+  }
+};
 
 export default auth;
