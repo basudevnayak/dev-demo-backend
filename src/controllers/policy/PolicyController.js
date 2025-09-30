@@ -30,11 +30,7 @@ const PolicyController = {
   // ✅ Create new policy
   async create(req, res) {
     try {
-         const policyData = {
-      ...req.body,
-      status: "active",
-    };
-      const policy = new Policies(policyData);
+      const policy = new Policies(req.body);
       const result = await policy.save();
 
       // Access token (optional for policies)

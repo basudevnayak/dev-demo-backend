@@ -1,7 +1,6 @@
 import express from 'express';
 import expressEjsLayouts from 'express-ejs-layouts';
 import { PORT, DB_URL } from './src/config/index.js';
-import './src/cron/policyCron.js'; // Import the cron job
 import { connect } from './src/config/connect.js';
 import dotenv from 'dotenv';
 import CustomErrorHandler from './src/utils/CustomErrorHandler.js';

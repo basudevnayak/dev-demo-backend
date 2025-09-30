@@ -11,8 +11,7 @@ const policySchema = new mongoose.Schema({
   planTerm: { type: Number, required: true },
   endDate: { type: Date, required: true },
   totalValue: { type: Number },
-  userGmail: { type: String, default: '' },
-  status: { type: String, enum: ['active', 'inactive', 'expired'], default: 'active' },
+    userGmail: { type: String, default: '' },
 }, { timestamps: true });
 
 

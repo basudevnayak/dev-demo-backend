@@ -23,11 +23,8 @@
 // loadPoliciesTable();
 async function loadPoliciesTable() {
   const tbody = document.getElementById("policiesTableBody");
-  const recentPoliciesTableBody = document.getElementById("recentPoliciesTableBody");
-  const pendingPoliciesTableBody = document.getElementById("pendingPoliciesTableBody");
   tbody.innerHTML = "";
-  recentPoliciesTableBody.innerHTML = "";
-  pendingPoliciesTableBody.innerHTML = "";
+
   try {
     const res = await fetch("http://localhost:5000/api/policies", {
       method: "GET",
@@ -45,7 +42,7 @@ async function loadPoliciesTable() {
     const policies = data.data || []; // API response { message, status, data }
 
     policies.forEach(policy => {
-      // console.log("Policy:", policy);
+      console.log("Policy:", policy);
       const row = document.createElement("tr");
       const statusClass =
         policy.status === "Active"
@@ -69,69 +66,9 @@ async function loadPoliciesTable() {
       `;
       tbody.appendChild(row);
     });
-
-
-    const recentPolicies = policies.slice(-10).reverse(); // reverse if you want newest first
-    recentPolicies.forEach(policy => {
-      const rowRecent = document.createElement("tr");
-
-      const statusClass =
-        policy.status === "Active"
-          ? "bg-success"
-          : policy.status === "Pending"
-            ? "bg-warning"
-            : "bg-secondary"; // default for other statuses
-
-      rowRecent.innerHTML = `
-    <td>${policy.policyNumber}</td>
-    <td>${policy.holderName}</td>
-    <td>${policy.installmentFreq || "-"}</td>
-    <td>${policy.planTerm?.toLocaleString() || 0}</td>
-    <td>${policy.policyCompany}</td>
-    <td><span class="badge ${statusClass}">${policy.status || "Active"}</span></td>
-  `;
-      recentPoliciesTableBody.appendChild(rowRecent);
-    });
-
-
-
-
-
-    // Render policies
-    policies.forEach(policy => {
-      const rowPending = document.createElement("tr");
-
-      // Determine status class for styling
-      let statusClass = "";
-      if (policy.status === "Payment Due") statusClass = "status-pending";
-      else if (policy.status === "Overdue") statusClass = "status-overdue";
-      else statusClass = "status-active"; // default / active
-
-      // Create row HTML
-      rowPending.innerHTML = `
-    <td>${policy.policyNumber}</td>
-    <td>${policy.holderName}</td>
-    <td>${policy.dueDate || "-"}</td>
-    <td><span class="status-badge ${statusClass}">${policy.status}</span></td>
-    
-  `;
-  // <td>
-  //       ${policy.status === "Payment Due"
-  //           ? `<button class="btn btn-success btn-sm">
-  //               <i class="fas fa-check me-1"></i>Mark Paid
-  //             </button>`
-  //           : policy.status === "Overdue"
-  //             ? `<button class="btn btn-danger btn-sm">
-  //                 <i class="fas fa-envelope me-1"></i>Send Reminder
-  //               </button>`
-  //             : ""
-  //         }
-  //     </td>
-      pendingPoliciesTableBody.appendChild(rowPending);
-    });
   } catch (err) {
     console.error("Error loading policies:", err);
-    recentPoliciesTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Failed to load policies</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Failed to load policies</td></tr>`;
   }
 }
 
@@ -328,7 +265,7 @@ async function handleCreatePolicy(event) {
   const form = document.getElementById("createPolicyForm");
   const formData = new FormData(form);
   const policyData = Object.fromEntries(formData.entries());
-  // console.log("Policy Data:", policyData);
+  console.log("Policy Data:", policyData);
   if (!form.reportValidity()) {
     return; // stops if invalid
   }
@@ -341,7 +278,7 @@ async function handleCreatePolicy(event) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(policyData)
       });
-    }
+    } 
     if (policyData.update == "") {
       response = await fetch("http://localhost:5000/api/policies", {
         method: "POST",
@@ -358,7 +295,7 @@ async function handleCreatePolicy(event) {
 
     const result = await response.json();
     alert("✅ Policy saved successfully!");
-    // console.log("API Response:", result);
+    console.log("API Response:", result);
 
     // Optionally reset form
     form.reset();

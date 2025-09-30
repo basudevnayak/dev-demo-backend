@@ -133,7 +133,7 @@
         window.location.href = '/dashboard'; // redirect
 
       } catch (err) {
-        alert("Please enter correct email and password");
+        alert(err.message);
       }
     });
 
@@ -163,7 +163,7 @@
         if (!res.ok) throw new Error(data.message || 'Signup failed');
 
         alert('Signup successful! Please login.');
-        // window.location.href = '/dashboard';
+        window.location.href = '/dashboard';
         // Switch to login tab
         const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
         loginTab.show();

@@ -27,9 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarToggle.classList.toggle("show");
     sidebarToggle.classList.toggle("show");
   });
-  // overlay.addEventListener("click", closeMobileSidebar);
+  overlay.addEventListener("click", closeMobileSidebar);
   function closeMobileSidebar() {
-    // console.log(sidebar.classList)
+    console.log(sidebar.classList)
     sidebar.classList.remove("show");
     // overlay.classList.remove("show");
   }
@@ -68,8 +68,3 @@ function showSection(section) {
   }
 }
 
-
- document.getElementById("logoutBtn").addEventListener("click", () => {
-    // Clear session, redirect, etc.
-    alert("User logged out");
-  });
