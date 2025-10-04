@@ -50,7 +50,6 @@ const AuthController = {
 
     try {
       const existingUser = await User.findOne({ email });
-      console.log(existingUser)
       if (existingUser) {
         return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
       }
@@ -70,11 +69,10 @@ const AuthController = {
       // Save the user to the database
       const result = await user.save();
 
-      // Generate tokens (access token and refresh token)
-      const access_token = JwtService.sign({ _id: result._id, role: result.role });
-      const refresh_token = JwtService.sign({ _id: result._id, role: result.role }, '1y', REFRESH_SECRET);
-      res.cookie('token', access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 1 day
-      // Respond with the user data and the tokens
+      const access_token = JwtService.sign({ _id: user._id, role: user.role });
+      const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
+      await RefreshToken.create({ token: refresh_token });
+      res.cookie('token', access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
       res.json({
         user: {
           id: result._id,
@@ -112,7 +110,7 @@ const AuthController = {
       const access_token = JwtService.sign({ _id: user._id, role: user.role });
       const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
       await RefreshToken.create({ token: refresh_token });
-      res.cookie('token', access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 1 day
+      res.cookie('token', access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
       res.json({
         user: {
           id: user._id,
@@ -122,7 +120,8 @@ const AuthController = {
           authority: user.role === 'admin' ? ['admin', 'user'] : ['user'],
           accountUserName: user.accountUserName || user.email,
         },
-        token: access_token,
+        access_token,
+        refresh_token,
       });
     } catch (err) {
       return next(err);
@@ -139,10 +138,11 @@ const AuthController = {
       }
       try {
         await RefreshToken.deleteOne({ token: req.body.refresh_token });
+        res.clearCookie('token'); // Remove the 'token' cookie
+        res.json({ status: 1 });
       } catch (err) {
         return next(new Error('Something went wrong in the database'));
       }
-      res.json({ status: 1 });
     } catch (error) {
       res.json({ error });
     }

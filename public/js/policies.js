@@ -23,14 +23,19 @@
 // loadPoliciesTable();
 async function loadPoliciesTable() {
   const tbody = document.getElementById("policiesTableBody");
+  const policiesRecentTableBody = document.getElementById('policiesRecentTableBody');
+  const policiesPendingTableBody = document.getElementById('policiesPendingTableBody')
   tbody.innerHTML = "";
-
+  policiesRecentTableBody.innerHTML = "";
+  policiesPendingTableBody.innerHTML = "";
+  const email = localStorage.getItem('email')
   try {
     const res = await fetch("http://localhost:5000/api/policies", {
       method: "GET",
       credentials: "include", // ✅ important to send cookies
       headers: {
         "Content-Type": "application/json",
+        "email": email
       },
     });
 
@@ -44,13 +49,14 @@ async function loadPoliciesTable() {
     policies.forEach(policy => {
       console.log("Policy:", policy);
       const row = document.createElement("tr");
+      const rowRecent = document.createElement("tr");
+      const rowPending = document.createElement("tr");
       const statusClass =
         policy.status === "Active"
           ? "bg-success"
           : policy.status === "Pending"
             ? "bg-warning"
             : "bg-success";
-
       row.innerHTML = `
         <td>${policy.policyNumber}</td>
         <td>${policy.holderName}</td>
@@ -64,11 +70,37 @@ async function loadPoliciesTable() {
           <button class="btn btn-sm btn-danger" onclick="deletePolicy('${policy._id}')"><i class="fas fa-trash"></i></button>
         </td>
       `;
+      rowRecent.innerHTML = `
+        <td>${policy.policyNumber}</td>
+        <td>${policy.holderName}</td>
+        <td>${policy.installmentFreq || "-"}</td>
+        <td>${policy.planTerm?.toLocaleString() || 0}</td>
+        <td>${policy.policyCompany}</td>
+        <td><span class="badge ${statusClass}">${policy.status || "Active"}</span></td>
+        `
+      // <td>
+      //   <button class="btn btn-sm btn-primary me-1" onclick="viewPolicy('${policy._id}')"><i class="fas fa-eye"></i></button>
+      //   <button class="btn btn-sm btn-warning me-1" onclick="editPolicy('${policy._id}')"><i class="fas fa-edit"></i></button>
+      //   <button class="btn btn-sm btn-danger" onclick="deletePolicy('${policy._id}')"><i class="fas fa-trash"></i></button>
+      // </td>
+      if (statusClass == "Pending") {
+        rowPending.innerHTML = `
+        <td>${policy.policyNumber}</td>
+        <td>${policy.holderName}</td>
+        <td>${policy.installmentFreq || "-"}</td>
+        <td>${policy.planTerm?.toLocaleString() || 0}</td>
+        <td><span class="badge ${statusClass}">${policy.status || "Active"}</span></td>`
+      }
+      // <td>${policy.policyCompany}</td>
       tbody.appendChild(row);
+      policiesRecentTableBody.appendChild(rowRecent)
+      policiesPendingTableBody.appendChild(rowPending)
     });
   } catch (err) {
     console.error("Error loading policies:", err);
     tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Failed to load policies</td></tr>`;
+    policiesRecentTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Failed to load policies</td></tr>`;
+    policiesPendingTableBody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Failed to load policies</td></tr>`;
   }
 }
 
@@ -239,33 +271,11 @@ function loadMyPolicies() {
 }
 loadMyPolicies();
 
-
-// function handleCreatePolicy(event) {
-//     event.preventDefault(); // prevent form refresh
-
-//     const form = document.getElementById("createPolicyForm");
-//     const formData = new FormData(form);
-
-//     // Convert FormData to object
-//     const policyData = Object.fromEntries(formData.entries());
-
-//     console.log("Policy Data:", policyData);
-
-//     // Example: send to backend
-//     // fetch("/api/policies", {
-//     //   method: "POST",
-//     //   headers: { "Content-Type": "application/json" },
-//     //   body: JSON.stringify(policyData),
-//     // });
-//   }
-
-
 async function handleCreatePolicy(event) {
   event.preventDefault();
   const form = document.getElementById("createPolicyForm");
   const formData = new FormData(form);
   const policyData = Object.fromEntries(formData.entries());
-  console.log("Policy Data:", policyData);
   if (!form.reportValidity()) {
     return; // stops if invalid
   }
@@ -278,12 +288,15 @@ async function handleCreatePolicy(event) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(policyData)
       });
-    } 
+    }
+    const userGmail = localStorage.getItem('email')
+    console.error("userGmail",userGmail)
     if (policyData.update == "") {
       response = await fetch("http://localhost:5000/api/policies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          userGmail:userGmail
         },
         body: JSON.stringify(policyData),
       });
@@ -299,6 +312,7 @@ async function handleCreatePolicy(event) {
 
     // Optionally reset form
     form.reset();
+    loadPoliciesTable();
     goToSection("policies");
   } catch (error) {
     console.error("❌ Error:", error);

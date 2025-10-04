@@ -1,44 +1,25 @@
 import cron from "node-cron";
 import Policies from "../models/policies/Policies.js";
+import { sendEmail } from "../utils/sendEmail.js"; // custom email utility
 
-// Job logic: expire policies, log data
-export const expirePolicies = async () => {
-  console.log("⏰ Policy Cron Job running...", new Date().toLocaleString());
-
+cron.schedule("* * * * *", async () => {
+  console.log("📢 Reminder Cron Running:", new Date().toLocaleString());
   try {
-    const expiredPolicies = await Policies.find({
-      expiryDate: { $lte: new Date().toLocaleString() },
-      status: "active"
-    });
-
-    if (expiredPolicies.length === 0) {
-      console.log("✅ No active policies to expire.");
-    //   return;
+    const policies = await Policies.find({ status: "active" });
+    for (const policy of policies) {
+      const due = new Date(policy.endDate);
+      const today = new Date();
+      const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+      if ([10, 5, 0].includes(diffDays)) {
+        await sendEmail({
+          to: policy.userGmail,  // assume you store email
+          subject: `Policy Payment Reminder: ${policy.policyNumber}`,
+          text: `Dear ${policy.holderName}, your policy ${policy.policyNumber} is due on ${due.toDateString()}. Please make payment of Rs.${policy.premiumAmount}.`
+        });
+        console.log(`📧 Reminder sent to ${policy.holderName} (${policy.policyNumber})`);
+      }
     }
-
-    const result = await Policies.updateMany(
-      { _id: { $in: expiredPolicies.map(p => p._id) } },
-      { $set: { status: "expired" } }
-    );
-
-    console.log(`✅ Policies expired: ${result.modifiedCount}`);
-
-    // 3️⃣ Log each expired policy
-    expiredPolicies.forEach(policy => {
-      console.log("📋 Expired Policy:", {
-        id: policy._id,
-        policyNumber: policy.policyNumber,
-        holderName: policy.holderName,
-        agentName: policy.agentName,
-        policyCompany: policy.policyCompany,
-        expiryDate: policy.expiryDate,
-        status: "expired"
-      });
-    });
-
   } catch (error) {
-    console.error("❌ Error in policy cron job:", error.message);
+    console.error("❌ Reminder Cron Error:", error.message);
   }
-};
-
-cron.schedule("* * * * *", expirePolicies);
+});

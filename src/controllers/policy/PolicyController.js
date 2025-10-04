@@ -6,41 +6,68 @@ const PolicyController = {
   // ✅ Get all policies
   async index(req, res) {
     try {
-      const policies = await Policies.find();
-      if (!policies || policies.length === 0) {
-        return res.status(404).json({
-          message: "No policies found",
-          status: 404,
-        });
-      }
-      return res.status(200).json({
-        message: "Policies fetched successfully",
-        status: 200,
-        data: policies,
-      });
+      // const policies = await Policies.find();
+      const userGmail = req.headers['email']
+      const policies = await Policies.find({ userGmail })
+      const data = policies.map(p => ({
+        ...p.toObject(),
+        nextDueDate: p.nextDueDate,
+        investedSoFar: p.investedSoFar
+      }));
+      return res.json({ status: 200, data });
     } catch (err) {
-      return res.status(500).json({
-        message: "Server error fetching policies",
-        status: 500,
-        error: err.message,
-      });
+      return res.status(500).json({ error: err.message });
     }
   },
 
   // ✅ Create new policy
   async create(req, res) {
     try {
-      const policy = new Policies(req.body);
+      const userGmail = req.headers['usergmail'];
+      const {
+        createDate,       // string: "YYYY-MM-DD"
+        planTerm,         // number of years
+        installmentFreq,  // "Monthly", "Quarterly", "Yearly"
+        ...rest
+      } = req.body;
+      const startDate = new Date(createDate);
+      const endDate = new Date(startDate);
+      endDate.setFullYear(startDate.getFullYear() + Number(planTerm));
+      const installmentDates = [];
+      let current = new Date(startDate);
+
+      let monthsToAdd;
+      switch (installmentFreq) {
+        case "Monthly":
+          monthsToAdd = 1;
+          break;
+        case "Quarterly":
+          monthsToAdd = 3;
+          break;
+        case "Yearly":
+          monthsToAdd = 12;
+          break;
+        default:
+          monthsToAdd = 0; // no installments
+      }
+      if (monthsToAdd > 0) {
+        const totalInstallments = (Number(planTerm) * 12) / monthsToAdd;
+        for (let i = 0; i < totalInstallments; i++) {
+          current = new Date(current.setMonth(current.getMonth() + monthsToAdd));
+          installmentDates.push(new Date(current));
+        }
+      }
+      const policyData = {
+        ...rest,
+        userGmail,
+        createDate: startDate,
+        endDate,
+        installmentFreq,
+        installmentDates
+      };
+      const policy = new Policies(policyData);
       const result = await policy.save();
-
-      // Access token (optional for policies)
       const access_token = JwtService.sign({ _id: result._id, role: result.role });
-      const refresh_token = JwtService.sign(
-        { _id: result._id, role: result.role },
-        "1y",
-        REFRESH_SECRET
-      );
-
       return res.status(201).json({
         message: "Policy created successfully",
         status: 201,
@@ -55,8 +82,6 @@ const PolicyController = {
       });
     }
   },
-
-  // ✅ Get single policy by ID
   async show(req, res) {
     try {
       const policy = await Policies.findById(req.params.id);
